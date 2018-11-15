@@ -1,5 +1,7 @@
 ---
 title: "Tarea 5"
+author: "Matiás Navarrete - Matiás Pacheco - Jorge Pino"
+date: "16 de Noviembre del 2018"
 output: html_document
 ---
 
@@ -12,7 +14,118 @@ library(ggplot2)
 library(gridExtra)
 ```
 
-#Pregunta 1
+<Pregunta 2>
+
+```{r 2, echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+library(ggthemes)
+library(tidyverse)
+library(gridExtra)
+if(!require("pacman")) install.packages("pacman")
+p_load("tidyverse","tidyquant","ggthemes")
+library(quantmod)
+library(pdfetch)
+
+#1
+tickers <- c("MSFT","AAPL")
+acciones <- tq_get(tickers,
+                   get = "stock.prices",
+                   from = "2000-01-01",
+                   to = "2018-08-01",
+                   periodicity = "monthly")
+
+#2
+#a
+acciones1<- acciones%>%filter(acciones$symbol=="MSFT")#datos de msft
+acciones2<- acciones%>%filter(acciones$symbol=="AAPL")#datos de apple
+
+retorno2<-function(x){
+  if(x=="MSFT"){
+    x<-acciones1$open
+    z<-acciones1$close
+    o<-log(x)-log(z)
+    return(o)
+  }
+  else {
+    x<-acciones2$open
+    z<-acciones2$close
+    o<-log(x)-log(z)
+    return(o)
+  }
+  }
+retorno2("MSFT")
+
+
+
+#b
+rmsft<- retorno2("MSFT")#guardamos los retornos de msft
+raapl<- retorno2("AAPL")#guardamos los retornos de apple
+
+retorno2_grafico<-function(x){
+  if(x=="MSFT"){
+    g1<-acciones1%>%ggplot(aes(x=acciones1$date,y=rmsft))+geom_line()+ 
+      ylab("Variación del retorno")+xlab("Tiempo")+ggtitle("Variación del retorno en el tiempo")+theme_economist()
+    g2<-acciones1%>%ggplot(aes(x=rmsft,y=))+geom_density(alpha=1)+
+     ylab("Densidad")+xlab("Variación")+theme_economist()
+    grid.arrange(g1,g2,ncol=2)
+  }
+  else {
+    h1<-acciones2%>%ggplot(aes(x=acciones2$date,y=raapl))+geom_line()+ 
+      ylab("Variación del retorno")+xlab("Tiempo")+ggtitle("Variación del retorno en el tiempo")+
+    theme_economist()
+    h2<-acciones2%>%ggplot(aes(x=raapl,y=))+geom_density(alpha=1)+
+      ylab("Densidad")+xlab("Variación")+theme_economist()
+    grid.arrange(h1,h2,ncol=2)
+  }}
+  
+retorno2_grafico("MSFT")
+
+#c
+Jarque.bera<-function(x){
+  if(x=="MSFT"){
+    
+    
+    JB<- function(x){ 
+      x<-rmsft
+      n<-length(x)
+      JBE<- n*((((sum((x-mean(x))^3))/n / ((sqrt(var(x))^3)))^2)/6 + ((((sum((x-mean(x))^4))/n / ((var(x)^2)))-3)^2)/24) 
+      print(paste("El valor del test jarque bera es igual a",JBE))
+    }
+    JB("MSFT")
+  }
+  else {
+    JB<- function(x){ 
+      x<-raapl
+      n<-length(x)
+      JBE<- n*((((sum((x-mean(x))^3))/n / ((sqrt(var(x))^3)))^2)/6 + ((((sum((x-mean(x))^4))/n / ((var(x)^2)))-3)^2)/24) 
+      print(paste("El valor del test jarque bera es igual a",JBE))
+    }
+    JB("raapl")
+  }}
+
+Jarque.bera("MSFT")
+
+
+
+#función final
+función_final<- function(x){
+  if(x=="MSFT"){
+   retorno2("MSFT")
+    retorno2_grafico("MSFT")
+    Jarque.bera("MSFT")
+  }
+  else {
+    retorno2("AAPL")
+    retorno2_grafico("AAPL")
+    Jarque.bera("AAPl")
+  }
+}
+
+función_final("AAPL")
+```
+
+<Pregunta 3>
 
 ##a)
 
