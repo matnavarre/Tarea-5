@@ -7,16 +7,16 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-#Pregunta 3
+```{r setup1, include=FALSE}
+library(ggplot2)
+library(gridExtra)
+```
+
+#Pregunta 1
 
 ##a)
 
-```{r}
-#Pregunta 3
-
-library(ggplot2)
-library(gridExtra)
-
+```{r a, echo=FALSE, message=FALSE, warning=FALSE}
 reps = 10000
 n = c(50, 100, 500, 1000)
 betas=matrix(NA, nrow = reps, ncol=8)
@@ -38,17 +38,53 @@ for(j in 1:length(n)){
 }
 betas_df<-data.frame(betas)
 means <- apply(betas,2,mean)
+```
+
+```{r esp, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+Eb0 = c(means[[1]], means[[2]],means[[3]],means[[4]])
+Eb1 = c(means[[5]], means[[6]],means[[7]],means[[8]])
+
+cat("E(b0) =", Eb0, "\n")
+cat("E(b1) =", Eb1, "\n")
+```
+
+Aquí se constata que las esperanzas de los parámetros estimados de $\beta_{0}$ y $\beta_{1}$ son distintas al parámetro real. Al aumentar el tamaño muestral si bien $E(\beta_{0})$ va acercandose a su valor real a medida que aumenta $n$, esto no sucede con $E(\beta_{1})$, el cual presenta una esperanza que no tiene un patrón definido.
+
+Las varianzas son las siguientes: 
+
+```{r vars, echo=FALSE, message=FALSE, warning=FALSE}
+
 vars <- apply(betas,2,var)
+
+varb0 = c(vars[[1]], vars[[2]],vars[[3]],vars[[4]])
+varb1 = c(vars[[5]], vars[[6]],vars[[7]],vars[[8]])
+
+cat("Var(b0) =", varb0, "\n")
+cat("Var(b1) =", varb1, "\n")
+```
+
+EL sesgo presente para cada coeficiente según tamaño muestral es: 
+
+```{r sesgo, echo=FALSE, message=FALSE, warning=FALSE}
 
 sesgob0 = c(means[[1]]-2, means[[2]]-2,means[[3]]-2,means[[4]]-2)
 sesgob1 = c(means[[5]]-2.5, means[[6]]-2.5, means[[7]]-2.5, means[[8]]-2.5)
+
+cat("Sesgob0 =", sesgob0, "\n")
+cat("Sesgob1 =", sesgob1, "\n")
+
 ```
+
+Los coeficientes son bastante sesgados, la razón principal de esto es que, probablemente la covarianza entre los regresores es distinta de cero. Evidentemente esto se da porque la variable $x_{2}$ depende de $x_{1}$.  
+Se puede apreciar que el sesgo de $\beta_{0}$ va disminuyendo al aumentar el tamaño muestral. Por otro lado el sesgo de $\beta_{1}$ no tiene un patrón de disminición o aumento cuando crece el tamaño muestral. 
 
 ##b)
 
-```{r}
+Los gráficos de las distribuciones de los $betas$ con sus respectivos tamaños muestrales son: 
 
-#b)
+```{r b, echo=FALSE, message=FALSE, warning=FALSE}
 g1 <- ggplot(betas_df) +
   geom_histogram(aes(betas_df[,5], y =..density..), col="black", bins=30) +
   stat_function(fun=dnorm, args=list(mean=mean(betas_df[,5]), sd=sd(betas_df[,5])),
@@ -73,15 +109,13 @@ g4 <- ggplot(betas_df) +
   ylab("densidad") + xlab(expression(hat(beta)[1])) + theme_bw() + ggtitle("n=1000")
 
 grid.arrange(g1, g2, g3, g4, ncol = 2, nrow = 2, top = "Distribución Beta1")
-
-#lo raro de esto es que cuando aumenta el tamaño muestral, las colas se me alejaron más y están demasiado sesgados
 ```
+
+Se puede ver claramente que aunque sean sesgados estos coeficientes, al aumentar el tamaño muestral la varianza de estos mismos disminuye bastante (ver límites eje y).
 
 ##c)
 
-```{r}
-#c)
-
+```{r c1, echo=FALSE, message=FALSE, warning=FALSE}
 reps = 10000
 n = c(50, 100, 500, 1000)
 betas=matrix(NA, nrow = reps, ncol=8)
@@ -103,12 +137,50 @@ for(j in 1:length(n)){
 }
 betas_df<-data.frame(betas)
 means <- apply(betas,2,mean)
+```
+
+Esperanzas: se constata que la esperanza de $\beta_{1}$ es mucho más certera que en el caso anterior. 
+
+```{r esp1, echo=FALSE, message=FALSE, warning=FALSE}
+
+Eb0 = c(means[[1]], means[[2]],means[[3]],means[[4]])
+Eb1 = c(means[[5]], means[[6]],means[[7]],means[[8]])
+
+cat("E(b0) =", Eb0, "\n")
+cat("E(b1) =", Eb1, "\n")
+```
+
+Varianzas: 
+
+```{r var1, echo=FALSE, message=FALSE, warning=FALSE}
+
 vars <- apply(betas,2,var)
+
+varb0 = c(vars[[1]], vars[[2]],vars[[3]],vars[[4]])
+varb1 = c(vars[[5]], vars[[6]],vars[[7]],vars[[8]])
+
+cat("Var(b0) =", varb0, "\n")
+cat("Var(b1) =", varb1, "\n")
+```
+
+Sesgos:
+
+```{r ses1, echo=FALSE, message=FALSE, warning=FALSE}
 
 sesgob0 = c(means[[1]]-2, means[[2]]-2,means[[3]]-2,means[[4]]-2)
 sesgob1 = c(means[[5]]-2.5, means[[6]]-2.5, means[[7]]-2.5, means[[8]]-2.5)
 
+cat("Sesgob0 =", sesgob0, "\n")
+cat("Sesgob1 =", sesgob1, "\n")
 
+
+```
+
+Evidentemente, el sesgo de $\beta_{1}$ es mucho menor que en el caso anterior, se podría decir, que en estos casos no hay sesgo, ya que al aumentar el tamaño muestrar este disminuye bastante lo que tiende a cero. Intuitivamente tiene bastante sentido este resultado, debido a que la variable $x_{2}$ sigue una distribución uniforme entre cero y uno, por lo tanto la covarianza entre los regresores es probablemente nula.  
+
+Gráficos: 
+
+```{r c2, echo=FALSE, message=FALSE, warning=FALSE}
 g1 <- ggplot(betas_df) +
   geom_histogram(aes(betas_df[,5], y =..density..), col="black", bins=30) +
   stat_function(fun=dnorm, args=list(mean=mean(betas_df[,5]), sd=sd(betas_df[,5])),
@@ -133,4 +205,7 @@ g4 <- ggplot(betas_df) +
   ylab("densidad") + xlab(expression(hat(beta)[1])) + theme_bw() + ggtitle("n=1000")
 
 grid.arrange(g1, g2, g3, g4, ncol = 2, nrow = 2, top = "Distribución Beta1")
+
 ```
+
+Evidentemente, en este caso las varianzas son aun mas pequeñas y mientras crece el tamaño muestral, las distribuciones se centran más certeramente en el verdadero valor del del parámetro.
