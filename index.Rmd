@@ -14,8 +14,9 @@ library(ggplot2)
 library(gridExtra)
 ```
 
-<Pregunta 2>
-
+<header>
+<h1>Pregunta 2</h1>
+<header>
 ```{r 2, echo=FALSE, message=FALSE, warning=FALSE}
 library(dplyr)
 library(ggplot2)
@@ -54,7 +55,7 @@ retorno2<-function(x){
     return(o)
   }
   }
-retorno2("MSFT")
+xr = retorno2("MSFT")
 
 
 
@@ -65,14 +66,14 @@ raapl<- retorno2("AAPL")#guardamos los retornos de apple
 retorno2_grafico<-function(x){
   if(x=="MSFT"){
     g1<-acciones1%>%ggplot(aes(x=acciones1$date,y=rmsft))+geom_line()+ 
-      ylab("Variación del retorno")+xlab("Tiempo")+ggtitle("Variación del retorno en el tiempo")+theme_economist()
+      ylab("Variación del retorno")+xlab("Tiempo")+ggtitle("Retorno en el tiempo")+theme_economist()
     g2<-acciones1%>%ggplot(aes(x=rmsft,y=))+geom_density(alpha=1)+
      ylab("Densidad")+xlab("Variación")+theme_economist()
     grid.arrange(g1,g2,ncol=2)
   }
   else {
     h1<-acciones2%>%ggplot(aes(x=acciones2$date,y=raapl))+geom_line()+ 
-      ylab("Variación del retorno")+xlab("Tiempo")+ggtitle("Variación del retorno en el tiempo")+
+      ylab("Variación del retorno")+xlab("Tiempo")+ggtitle("Retorno en el tiempo")+
     theme_economist()
     h2<-acciones2%>%ggplot(aes(x=raapl,y=))+geom_density(alpha=1)+
       ylab("Densidad")+xlab("Variación")+theme_economist()
@@ -125,9 +126,11 @@ función_final<- function(x){
 función_final("AAPL")
 ```
 
-<Pregunta 3>
+<header>
+<h1>Pregunta 3</h1>
 
-##a)
+<p>a)</p>
+<header>
 
 ```{r a, echo=FALSE, message=FALSE, warning=FALSE}
 reps = 10000
@@ -191,9 +194,11 @@ cat("Sesgob1 =", sesgob1, "\n")
 ```
 
 Los coeficientes son bastante sesgados, la razón principal de esto es que, probablemente la covarianza entre los regresores es distinta de cero. Evidentemente esto se da porque la variable $x_{2}$ depende de $x_{1}$.  
-Se puede apreciar que el sesgo de $\beta_{0}$ va disminuyendo al aumentar el tamaño muestral. Por otro lado el sesgo de $\beta_{1}$ no tiene un patrón de disminición o aumento cuando crece el tamaño muestral. 
+Se puede apreciar que el sesgo de $\beta_{0}$ va disminuyendo al aumentar el tamaño muestral. Por otro lado el sesgo de $\beta_{1}$ no tiene un patrón de disminición o aumento cuando crece el tamaño muestral.
 
-##b)
+<header>
+<p>b)</p>
+<header>
 
 Los gráficos de las distribuciones de los $betas$ con sus respectivos tamaños muestrales son: 
 
@@ -226,7 +231,9 @@ grid.arrange(g1, g2, g3, g4, ncol = 2, nrow = 2, top = "Distribución Beta1")
 
 Se puede ver claramente que aunque sean sesgados estos coeficientes, al aumentar el tamaño muestral la varianza de estos mismos disminuye bastante (ver límites eje y).
 
-##c)
+<header>
+<p>c)</p>
+<header>
 
 ```{r c1, echo=FALSE, message=FALSE, warning=FALSE}
 reps = 10000
